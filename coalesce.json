@@ -1,0 +1,16 @@
+{
+  "webProject": {
+    "projectFile": "./UndergraduateResearchPortal.Web/UndergraduateResearchPortal.Web.csproj"
+  },
+  "dataProject": {
+    "projectFile": "./UndergraduateResearchPortal.Data/UndergraduateResearchPortal.Data.csproj"
+  },
+
+  "rootGenerator": "Vue",
+
+  "generatorConfig": {
+    "Scripts": {
+      "targetDirectory": "../src"
+    }
+  }
+}
