@@ -32,19 +32,19 @@ jobs:
         shell: pwsh
 
       - name: Build with dotnet
-        run: dotnet build UndergraduateResearchPortal.Web/UndergraduateResearchPortal.Web.csproj --configuration Release
+        run: dotnet build --configuration Release
 
       - name: Test with dotnet
-        run: dotnet test UndergraduateResearchPortal.Web/UndergraduateResearchPortal.Web.csproj --no-build
+        run: dotnet test --no-build
 
       - name: dotnet publish
-        run: dotnet publish UndergraduateResearchPortal.Web/UndergraduateResearchPortal.Web.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/UndergraduateResearchPortal
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
           name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          path: ${{env.DOTNET_ROOT}}/UndergraduateResearchPortal
 
   deploy:
     if: github.event_name != 'pull_request'
