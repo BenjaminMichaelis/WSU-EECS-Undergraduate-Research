@@ -1,4 +1,4 @@
-name: Build, Test and Deploy Undergraduate Research Portal
+name: Build, Test, and Deploy Undergraduate Research Portal
 
 on:
   push:
