@@ -31,6 +31,10 @@ jobs:
            npm ci
            npm run build
         shell: pwsh
+
+      - name: Build with dotnet
+        run: dotnet build --configuration Release
+        
       - name: Ensure Coalesce has run
         run: |
               cd ./UndergraduateResearchPortal.Web
@@ -42,13 +46,10 @@ jobs:
               echo 'Checking Diff'
               git diff HEAD --cached --exit-code
 
-      - name: Build with dotnet
-        run: dotnet build --configuration Release
-
       - name: Test with dotnet
         run: dotnet test --no-build
 
-      - name: dotnet publish
+      - name: Dotnet Publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/UndergraduateResearchPortal
 
       - name: Upload artifact for deployment job
