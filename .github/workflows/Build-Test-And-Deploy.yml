@@ -46,7 +46,11 @@ jobs:
               echo 'Checking Diff'
               git diff HEAD --cached --exit-code
         shell: pwsh
-
+      
+      - name: Run npm vite tests
+        run: |
+          cd ./UndergraduateResearchPortal.Web
+          npm run test run
       - name: Test with dotnet
         run: dotnet test --no-build
 
