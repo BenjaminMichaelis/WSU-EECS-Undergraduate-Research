@@ -56,4 +56,3 @@ jobs:
         with:
           app-name: 'UndergraduateResearchPortal-app'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_D9F5B37669C842D7B0CA5FA94D876F22 }}
-          package: .
