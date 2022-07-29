@@ -34,7 +34,7 @@ jobs:
         run: dotnet build UndergraduateResearchPortal.Web/UndergraduateResearchPortal.Web.csproj --configuration Release
 
       - name: Test with dotnet
-        run: dotnet UndergraduateResearchPortal.Web/UndergraduateResearchPortal.Web.csproj test --no-build
+        run: dotnet test UndergraduateResearchPortal.Web/UndergraduateResearchPortal.Web.csproj --no-build
 
       - name: dotnet publish
         run: dotnet publish UndergraduateResearchPortal.Web/UndergraduateResearchPortal.Web.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp
