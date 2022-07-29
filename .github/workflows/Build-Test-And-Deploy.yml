@@ -25,11 +25,22 @@ jobs:
           node-version: 16
           cache: 'npm'
           cache-dependency-path: ./UndergraduateResearchPortal.Web/package-lock.json
-      - run: |
+      - name: Install npm packages
+        run: |
            cd ./UndergraduateResearchPortal.Web
            npm ci
            npm run build
         shell: pwsh
+      - name: Ensure Coalesce has run
+        run: |
+              cd ./UndergraduateResearchPortal.Web
+              echo 'Running Coalesce'
+              npm run coalesce
+              if ($LASTEXITCODE -ne 0) { throw "`npm run coalesce` exited with code $LASTEXITCODE" }
+              echo 'Adding Changed Files'
+              git add .
+              echo 'Checking Diff'
+              git diff HEAD --cached --exit-code
 
       - name: Build with dotnet
         run: dotnet build --configuration Release
