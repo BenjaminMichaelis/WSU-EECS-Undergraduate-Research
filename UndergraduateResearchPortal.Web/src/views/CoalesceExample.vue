@@ -40,7 +40,7 @@ export default class CoalesceExample extends Vue {
   private user = new UserViewModel();
 
   async created() {
-    await this.user.$load(1);
+    await this.user.$load();
     this.user.$startAutoSave(this, { wait: 500, debounce: { maxWait: 3000 } });
   }
 }
