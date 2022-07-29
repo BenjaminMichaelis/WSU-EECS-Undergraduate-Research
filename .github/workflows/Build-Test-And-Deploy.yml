@@ -45,6 +45,7 @@ jobs:
               git add .
               echo 'Checking Diff'
               git diff HEAD --cached --exit-code
+        shell: pwsh
 
       - name: Test with dotnet
         run: dotnet test --no-build
