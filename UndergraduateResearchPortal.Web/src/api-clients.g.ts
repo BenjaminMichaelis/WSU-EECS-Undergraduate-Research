@@ -28,3 +28,60 @@ export class UserApiClient extends ModelApiClient<$models.User> {
 }
 
 
+export class LoginServiceApiClient extends ServiceApiClient<typeof $metadata.LoginService> {
+  constructor() { super($metadata.LoginService) }
+  public login(email: string | null, password: string | null, $config?: AxiosRequestConfig): AxiosPromise<ItemResult<void>> {
+    const $method = this.$metadata.methods.login
+    const $params =  {
+      email,
+      password,
+    }
+    return this.$invoke($method, $params, $config)
+  }
+  
+  public getToken(email: string | null, password: string | null, $config?: AxiosRequestConfig): AxiosPromise<ItemResult<unknown>> {
+    const $method = this.$metadata.methods.getToken
+    const $params =  {
+      email,
+      password,
+    }
+    return this.$invoke($method, $params, $config)
+  }
+  
+  public logout($config?: AxiosRequestConfig): AxiosPromise<ItemResult<void>> {
+    const $method = this.$metadata.methods.logout
+    const $params =  {
+    }
+    return this.$invoke($method, $params, $config)
+  }
+  
+  public createAccount(firstName: string | null, lastName: string | null, email: string | null, password: string | null, $config?: AxiosRequestConfig): AxiosPromise<ItemResult<void>> {
+    const $method = this.$metadata.methods.createAccount
+    const $params =  {
+      firstName,
+      lastName,
+      email,
+      password,
+    }
+    return this.$invoke($method, $params, $config)
+  }
+  
+  public changePassword(currentPassword: string | null, newPassword: string | null, $config?: AxiosRequestConfig): AxiosPromise<ItemResult<void>> {
+    const $method = this.$metadata.methods.changePassword
+    const $params =  {
+      currentPassword,
+      newPassword,
+    }
+    return this.$invoke($method, $params, $config)
+  }
+  
+  public isLoggedIn($config?: AxiosRequestConfig): AxiosPromise<ItemResult<void>> {
+    const $method = this.$metadata.methods.isLoggedIn
+    const $params =  {
+    }
+    return this.$invoke($method, $params, $config)
+  }
+  
+}
+
+

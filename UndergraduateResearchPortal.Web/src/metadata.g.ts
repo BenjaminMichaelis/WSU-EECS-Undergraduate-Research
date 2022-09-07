@@ -456,6 +456,159 @@ export const User = domain.types.User = {
   dataSources: {
   },
 }
+export const LoginService = domain.services.LoginService = {
+  name: "LoginService",
+  displayName: "Login Service",
+  type: "service",
+  controllerRoute: "LoginService",
+  methods: {
+    login: {
+      name: "login",
+      displayName: "Login",
+      transportType: "item",
+      httpMethod: "POST",
+      params: {
+        email: {
+          name: "email",
+          displayName: "Email",
+          type: "string",
+          role: "value",
+        },
+        password: {
+          name: "password",
+          displayName: "Password",
+          type: "string",
+          role: "value",
+        },
+      },
+      return: {
+        name: "$return",
+        displayName: "Result",
+        type: "void",
+        role: "value",
+      },
+    },
+    getToken: {
+      name: "getToken",
+      displayName: "Get Token",
+      transportType: "item",
+      httpMethod: "POST",
+      params: {
+        email: {
+          name: "email",
+          displayName: "Email",
+          type: "string",
+          role: "value",
+        },
+        password: {
+          name: "password",
+          displayName: "Password",
+          type: "string",
+          role: "value",
+        },
+      },
+      return: {
+        name: "$return",
+        displayName: "Result",
+        // Type not supported natively by Coalesce - falling back to unknown.
+        type: "unknown",
+        role: "value",
+      },
+    },
+    logout: {
+      name: "logout",
+      displayName: "Logout",
+      transportType: "item",
+      httpMethod: "POST",
+      params: {
+      },
+      return: {
+        name: "$return",
+        displayName: "Result",
+        type: "void",
+        role: "value",
+      },
+    },
+    createAccount: {
+      name: "createAccount",
+      displayName: "Create Account",
+      transportType: "item",
+      httpMethod: "POST",
+      params: {
+        firstName: {
+          name: "firstName",
+          displayName: "First Name",
+          type: "string",
+          role: "value",
+        },
+        lastName: {
+          name: "lastName",
+          displayName: "Last Name",
+          type: "string",
+          role: "value",
+        },
+        email: {
+          name: "email",
+          displayName: "Email",
+          type: "string",
+          role: "value",
+        },
+        password: {
+          name: "password",
+          displayName: "Password",
+          type: "string",
+          role: "value",
+        },
+      },
+      return: {
+        name: "$return",
+        displayName: "Result",
+        type: "void",
+        role: "value",
+      },
+    },
+    changePassword: {
+      name: "changePassword",
+      displayName: "Change Password",
+      transportType: "item",
+      httpMethod: "POST",
+      params: {
+        currentPassword: {
+          name: "currentPassword",
+          displayName: "Current Password",
+          type: "string",
+          role: "value",
+        },
+        newPassword: {
+          name: "newPassword",
+          displayName: "New Password",
+          type: "string",
+          role: "value",
+        },
+      },
+      return: {
+        name: "$return",
+        displayName: "Result",
+        type: "void",
+        role: "value",
+      },
+    },
+    isLoggedIn: {
+      name: "isLoggedIn",
+      displayName: "Is Logged In",
+      transportType: "item",
+      httpMethod: "POST",
+      params: {
+      },
+      return: {
+        name: "$return",
+        displayName: "Result",
+        type: "void",
+        role: "value",
+      },
+    },
+  },
+}
 
 interface AppDomain extends Domain {
   enums: {
@@ -468,6 +621,7 @@ interface AppDomain extends Domain {
     User: typeof User
   }
   services: {
+    LoginService: typeof LoginService
   }
 }
 

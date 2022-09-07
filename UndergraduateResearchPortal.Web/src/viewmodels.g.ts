@@ -139,6 +139,80 @@ export class UserListViewModel extends ListViewModel<$models.User, $apiClients.U
 }
 
 
+export class LoginServiceViewModel extends ServiceViewModel<typeof $metadata.LoginService, $apiClients.LoginServiceApiClient> {
+  
+  public get login() {
+    const login = this.$apiClient.$makeCaller(
+      this.$metadata.methods.login,
+      (c, email: string | null, password: string | null) => c.login(email, password),
+      () => ({email: null as string | null, password: null as string | null, }),
+      (c, args) => c.login(args.email, args.password))
+    
+    Object.defineProperty(this, 'login', {value: login});
+    return login
+  }
+  
+  public get getToken() {
+    const getToken = this.$apiClient.$makeCaller(
+      this.$metadata.methods.getToken,
+      (c, email: string | null, password: string | null) => c.getToken(email, password),
+      () => ({email: null as string | null, password: null as string | null, }),
+      (c, args) => c.getToken(args.email, args.password))
+    
+    Object.defineProperty(this, 'getToken', {value: getToken});
+    return getToken
+  }
+  
+  public get logout() {
+    const logout = this.$apiClient.$makeCaller(
+      this.$metadata.methods.logout,
+      (c) => c.logout(),
+      () => ({}),
+      (c, args) => c.logout())
+    
+    Object.defineProperty(this, 'logout', {value: logout});
+    return logout
+  }
+  
+  public get createAccount() {
+    const createAccount = this.$apiClient.$makeCaller(
+      this.$metadata.methods.createAccount,
+      (c, firstName: string | null, lastName: string | null, email: string | null, password: string | null) => c.createAccount(firstName, lastName, email, password),
+      () => ({firstName: null as string | null, lastName: null as string | null, email: null as string | null, password: null as string | null, }),
+      (c, args) => c.createAccount(args.firstName, args.lastName, args.email, args.password))
+    
+    Object.defineProperty(this, 'createAccount', {value: createAccount});
+    return createAccount
+  }
+  
+  public get changePassword() {
+    const changePassword = this.$apiClient.$makeCaller(
+      this.$metadata.methods.changePassword,
+      (c, currentPassword: string | null, newPassword: string | null) => c.changePassword(currentPassword, newPassword),
+      () => ({currentPassword: null as string | null, newPassword: null as string | null, }),
+      (c, args) => c.changePassword(args.currentPassword, args.newPassword))
+    
+    Object.defineProperty(this, 'changePassword', {value: changePassword});
+    return changePassword
+  }
+  
+  public get isLoggedIn() {
+    const isLoggedIn = this.$apiClient.$makeCaller(
+      this.$metadata.methods.isLoggedIn,
+      (c) => c.isLoggedIn(),
+      () => ({}),
+      (c, args) => c.isLoggedIn())
+    
+    Object.defineProperty(this, 'isLoggedIn', {value: isLoggedIn});
+    return isLoggedIn
+  }
+  
+  constructor() {
+    super($metadata.LoginService, new $apiClients.LoginServiceApiClient())
+  }
+}
+
+
 const viewModelTypeLookup = ViewModel.typeLookup = {
   Application: ApplicationViewModel,
   Field: FieldViewModel,
@@ -154,5 +228,6 @@ const listViewModelTypeLookup = ListViewModel.typeLookup = {
   User: UserListViewModel,
 }
 const serviceViewModelTypeLookup = ServiceViewModel.typeLookup = {
+  LoginService: LoginServiceViewModel,
 }
 

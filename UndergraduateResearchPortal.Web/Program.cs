@@ -1,17 +1,22 @@
 using IntelliTect.Coalesce;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Console;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using System.Security.Claims;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using UndergraduateResearchPortal.Data;
+using UndergraduateResearchPortal.Data.Identity;
 using UndergraduateResearchPortal.Data.Models;
+using UndergraduateResearchPortal.Data.Services;
 
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 {
@@ -41,7 +46,13 @@ services.AddDbContext<AppDbContext>(options =>
         .UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)
     ));
 
+services.AddIdentity<User, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false)
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddTokenProvider<DataProtectorTokenProvider<User>>(TokenOptions.DefaultProvider)
+    .AddClaimsPrincipalFactory<UserClaimsPrincipalFactory<User, IdentityRole>>();
+
 services.AddCoalesce<AppDbContext>();
+services.AddSwaggerGen();
 
 services
     .AddMvc()
@@ -54,8 +65,64 @@ services
 
 services.Configure<InitialAccountAccessOptions>(configuration.GetSection("InitialAccount"));
 
-services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-        .AddCookie();
+JwtConfiguration jwtConfiguration = builder.Configuration.GetSection("JwtConfig").Get<JwtConfiguration>();
+services.AddSingleton(jwtConfiguration);
+
+services.AddAuthentication(auth =>
+{
+    auth.DefaultScheme = "JWT_OR_COOKIE";
+    // set to null so the default scheme takes effect (was changed by .AddIdentity)
+    auth.DefaultChallengeScheme = auth.DefaultAuthenticateScheme = null;
+}).AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtConfiguration.Issuer,
+        ValidAudience = jwtConfiguration.Audience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfiguration.SigningKey)),
+    };
+    options.SaveToken = true;
+    options.Events = new JwtBearerEvents
+    {
+
+        OnMessageReceived = context =>
+        {
+            var path = context.Request.Path;
+            // Pull the token from the querystring if it is present there.
+            context.Token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            if (context.Request.QueryString.Value?.Contains("token") ?? false)
+                context.Token = context.Request.Query.Where(q => q.Key == "token").First().Value;
+
+            return Task.CompletedTask;
+        },
+    };
+}).AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+{
+    options.Events.OnRedirectToLogin = c =>
+    {
+        c.Response.StatusCode = StatusCodes.Status401Unauthorized;
+        return Task.FromResult<object>(null!);
+    };
+}).AddPolicyScheme("JWT_OR_COOKIE", "JWT_OR_COOKIE", options =>
+{
+    // runs on each request
+    options.ForwardDefaultSelector = context =>
+    {
+        // use jwt if there is a token set
+        string authorization = context.Request.Headers[HeaderNames.Authorization];
+        if (!string.IsNullOrEmpty(authorization) && !authorization.Contains("null"))
+            return JwtBearerDefaults.AuthenticationScheme;
+
+        // otherwise always check for cookie auth
+        return IdentityConstants.ApplicationScheme;
+    };
+});
+
+services.AddScoped<ILoginService, LoginService>();
 
 #endregion
 
@@ -75,20 +142,8 @@ if (app.Environment.IsDevelopment())
     });
 
     app.MapCoalesceSecurityOverview("coalesce-security");
-
-    // TODO: Dummy authentication for initial development.
-    // Replace this with ASP.NET Core Identity, Windows Authentication, or some other scheme.
-    // This exists only because Coalesce restricts all generated pages and API to only logged in users by default.
-    app.Use(async (context, next) =>
-    {
-        Claim[] claims = new[] { new Claim(ClaimTypes.Name, "developmentuser") };
-
-        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-        await context.SignInAsync(context.User = new ClaimsPrincipal(identity));
-
-        await next.Invoke();
-    });
-    // End Dummy Authentication.
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseAuthentication();
